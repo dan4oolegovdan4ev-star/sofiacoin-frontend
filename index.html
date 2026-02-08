@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SofiaCoin 💎</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1>SofiaCoin Browser Miner</h1>
+  <div id="wallet-section">
+    <button id="createWallet">Create Wallet</button>
+    <button id="importWallet">Import Wallet</button>
+    <p id="seedPhrase" style="display:none;"></p>
+  </div>
+
+  <div id="mining-section">
+    <button id="startBtn">Start Mining</button>
+    <button id="stopBtn">Stop Mining</button>
+    <p>Credits mined: <span id="credits">0</span></p>
+    <p>H/s: <span id="hs">0</span></p>
+  </div>
+
+  <div id="send-section">
+    <input type="text" id="recipient" placeholder="Recipient address">
+    <input type="number" id="amount" placeholder="Amount">
+    <button id="sendBtn">Send SFC</button>
+  </div>
+
+  <div id="log-section">
+    <h3>Mining Log</h3>
+    <ul id="log"></ul>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
