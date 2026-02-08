@@ -1,0 +1,6 @@
+body { font-family: Arial, sans-serif; background: #121212; color: #fff; }
+.container { max-width: 600px; margin: auto; padding: 20px; background: #1e1e1e; border-radius: 10px; }
+h1 { text-align: center; color: #00ffcc; }
+button { margin: 5px; padding: 10px; border-radius: 5px; background: #00ffcc; border: none; color: #000; cursor: pointer; }
+input { padding: 8px; margin: 5px; width: calc(100% - 20px); border-radius: 5px; border: none; }
+#log { max-height: 200px; overflow-y: scroll; background: #000; padding: 10px; border-radius: 5px; }
