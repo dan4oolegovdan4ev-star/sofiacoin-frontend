@@ -3,37 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SofiaCoin Miner & Explorer 🇧🇬</title>
+<title>SofiaCoin Browser Miner 🇧🇬</title>
 <style>
+/* --- Body --- */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #ffffff;
-    color: #2f3640;
-    padding: 20px;
-    text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #ffffff;
+  color: #2f3640;
+  padding: 20px;
+  margin: 0;
+  text-align: center;
 }
 
-h1 {
-    color: #e74c3c;
-    margin-bottom: 20px;
+/* --- Header --- */
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+header h1 { color: #e74c3c; margin: 0; }
+.flag {
+  width: 40px;
+  height: 25px;
+  border-radius: 4px;
+  border: 1px solid #bdc3c7;
+  background: linear-gradient(to bottom, #ffffff 33%, #00966e 33% 66%, #d62612 66%);
 }
 
-div.section {
-    background: #f5f6fa;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+/* --- Containers --- */
+div.wallet, div.mining, div.send, div.section {
+  background: #f5f6fa;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+/* --- Buttons --- */
 button {
-    margin: 5px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
+  margin: 5px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
 }
 
 #createWalletBtn { background-color: #27ae60; color: #fff; }
@@ -41,224 +57,231 @@ button {
 #startBtn { background-color: #2980b9; color: #fff; }
 #stopBtn { background-color: #c0392b; color: #fff; }
 #sendBtn { background-color: #8e44ad; color: #fff; }
-#refreshBlocksBtn { background-color: #16a085; color: #fff; }
+#refreshBlocksBtn { background-color: #34495e; color: #fff; }
 
+/* --- Inputs --- */
 input {
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 6px;
-    border: 1px solid #dcdde1;
-    width: calc(100% - 22px);
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+  border: 1px solid #dcdde1;
+  width: calc(100% - 22px);
 }
 
+/* --- Mining Log --- */
 #log {
-    background: #ecf0f1;
-    color: #2f3640;
-    padding: 10px;
-    max-height: 200px;
-    overflow-y: scroll;
-    border-radius: 8px;
-    border: 1px solid #dcdde1;
-    margin-bottom: 10px;
+  background: #ecf0f1;
+  color: #2f3640;
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: scroll;
+  border-radius: 8px;
+  border: 1px solid #dcdde1;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+/* --- Block Explorer --- */
+#blocksTableContainer {
+  max-height: 250px;
+  overflow-y: scroll;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+#blocksTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+#blocksTable th, #blocksTable td {
+  padding: 8px;
+  border: 1px solid #dcdde1;
+  text-align: center;
 }
 
-th, td {
-    border: 1px solid #dcdde1;
-    padding: 8px;
-    font-size: 12px;
-    text-align: center;
-}
-
-th {
-    background-color: #27ae60;
-    color: #fff;
-}
+/* --- Stats --- */
+p { margin: 5px 0; font-weight: 500; }
 </style>
 </head>
 <body>
 
-<h1>SofiaCoin Miner & Explorer 🇧🇬</h1>
+<header>
+  <div class="flag"></div>
+  <h1>SofiaCoin Miner</h1>
+</header>
 
-<div class="section">
-    <button id="createWalletBtn">Create Wallet</button>
-    <button id="importWalletBtn">Import Wallet</button>
-    <p id="walletInfo"></p>
+<div class="wallet">
+  <button id="createWalletBtn">Create Wallet</button>
+  <button id="importWalletBtn">Import Wallet</button>
+  <p id="walletInfo"></p>
+</div>
+
+<div class="mining">
+  <button id="startBtn">Start Mining</button>
+  <button id="stopBtn">Stop Mining</button>
+  <p>Credits mined: <span id="credits">0</span></p>
+  <p>H/s: <span id="hashrate">0</span></p>
+</div>
+
+<div class="send">
+  <input type="text" id="recipient" placeholder="Recipient address">
+  <input type="number" id="amount" placeholder="Amount">
+  <button id="sendBtn">Send SFC</button>
 </div>
 
 <div class="section">
-    <button id="startBtn">Start Mining</button>
-    <button id="stopBtn">Stop Mining</button>
-    <p>Credits mined: <span id="credits">0</span></p>
-    <p>H/s: <span id="hashrate">0</span></p>
+  <h3>Mining Log</h3>
+  <div id="log"></div>
 </div>
 
 <div class="section">
-    <input type="text" id="recipient" placeholder="Recipient address">
-    <input type="number" id="amount" placeholder="Amount">
-    <button id="sendBtn">Send SFC</button>
-</div>
-
-<div class="section">
-    <h3>Mining Log</h3>
-    <div id="log"></div>
-</div>
-
-<div class="section">
-    <h3>Block Explorer</h3>
-    <button id="refreshBlocksBtn">Refresh Blocks</button>
+  <h3>Block Explorer</h3>
+  <button id="refreshBlocksBtn">Refresh Blocks</button>
+  <div id="blocksTableContainer">
     <table id="blocksTable">
-        <thead>
-            <tr>
-                <th>Index</th>
-                <th>Hash</th>
-                <th>Prev Hash</th>
-                <th>Transactions</th>
-                <th>Nonce</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
+      <thead>
+        <tr>
+          <th>Index</th>
+          <th>Hash</th>
+          <th>Prev Hash</th>
+          <th>Transactions</th>
+          <th>Nonce</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="blocksTableBody"></tbody>
     </table>
+  </div>
 </div>
 
 <script>
-const NODE_URL = "https://phones-pursuit-appraisal-sets.trycloudflare.com";
-
-// Elements
-let walletAddress = null;
 let mining = false;
 let credits = 0;
+let walletAddress = null;
 
-const walletInfo = document.getElementById('walletInfo');
 const creditsEl = document.getElementById('credits');
-const hashrateEl = document.getElementById('hashrate');
-const logEl = document.getElementById('log');
-
-const createWalletBtn = document.getElementById('createWalletBtn');
-const importWalletBtn = document.getElementById('importWalletBtn');
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
-const sendBtn = document.getElementById('sendBtn');
+const createWalletBtn = document.getElementById('createWalletBtn');
+const importWalletBtn = document.getElementById('importWalletBtn');
+const walletInfo = document.getElementById('walletInfo');
+const logEl = document.getElementById('log');
+const hashrateEl = document.getElementById('hashrate');
 const recipientInput = document.getElementById('recipient');
 const amountInput = document.getElementById('amount');
+const sendBtn = document.getElementById('sendBtn');
 const refreshBlocksBtn = document.getElementById('refreshBlocksBtn');
-const blocksTableBody = document.querySelector("#blocksTable tbody");
+const blocksTableBody = document.getElementById('blocksTableBody');
+
+const NODE_URL = "https://phones-pursuit-appraisal-sets.trycloudflare.com";
 
 // --------- Wallet ---------
 createWalletBtn.onclick = async () => {
-    const res = await fetch(NODE_URL + "/wallet/create", {method:"POST"});
-    const data = await res.json();
-    walletAddress = data.address;
-    alert("Save your seed: " + data.seed);
-    walletInfo.textContent = "Wallet: " + walletAddress;
-    localStorage.setItem("walletAddress", walletAddress);
+  const res = await fetch(NODE_URL + "/wallet/create", { method: "POST" });
+  const data = await res.json();
+  walletAddress = data.address;
+  alert("Save your seed phrase: " + data.seed);
+  walletInfo.textContent = `Wallet: ${walletAddress}`;
+  localStorage.setItem("walletAddress", walletAddress);
 };
 
 importWalletBtn.onclick = async () => {
-    const seed = prompt("Enter your seed:");
-    if(!seed) return;
-    const res = await fetch(NODE_URL + "/wallet/import", {
-        method:"POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({seed})
-    });
-    const data = await res.json();
-    walletAddress = data.address;
-    walletInfo.textContent = `Wallet: ${walletAddress} | Balance: ${data.balance}`;
-    localStorage.setItem("walletAddress", walletAddress);
+  const seed = prompt("Enter your seed phrase:");
+  if(!seed) return;
+  const res = await fetch(NODE_URL + "/wallet/import", {
+    method:"POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({seed})
+  });
+  const data = await res.json();
+  walletAddress = data.address;
+  walletInfo.textContent = `Wallet: ${walletAddress} | Balance: ${data.balance}`;
+  localStorage.setItem("walletAddress", walletAddress);
 };
 
 // --------- Mining ---------
-startBtn.onclick = () => {
-    if(!walletAddress) return alert("Create or import wallet first!");
-    mining = true;
-    mineLoop();
+startBtn.onclick = () => { 
+  if(!walletAddress) return alert("Create or import wallet first!");
+  mining = true; 
+  mineLoop(); 
 };
 stopBtn.onclick = () => { mining = false; };
 
-async function mineLoop() {
-    while(mining){
-        const startTime = performance.now();
-        try {
-            const res = await fetch(NODE_URL + "/mine", {
-                method:"POST",
-                headers: {"Content-Type":"application/json"},
-                body: JSON.stringify({address: walletAddress})
-            });
-            const data = await res.json();
-            if(data.status === "mined"){
-                credits = data.balance;
-                creditsEl.textContent = credits;
-                const endTime = performance.now();
-                const hps = Math.floor(1000/(endTime-startTime));
-                hashrateEl.textContent = hps;
-                logEl.innerHTML += `Mined block #${data.block.index} | Reward: ${data.reward}<br>`;
-                logEl.scrollTop = logEl.scrollHeight;
-            }
-        } catch(e){
-            logEl.innerHTML += "Error connecting to node.<br>";
-        }
-        await new Promise(r => setTimeout(r, 500));
+async function mineLoop(){
+  while(mining){
+    const startTime = performance.now();
+    try {
+      const res = await fetch(NODE_URL + "/mine", {
+        method:"POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({address: walletAddress})
+      });
+      const data = await res.json();
+      if(data.status === "mined"){
+        credits = data.balance;
+        creditsEl.textContent = credits;
+        const endTime = performance.now();
+        const hps = Math.floor(1000/(endTime-startTime));
+        hashrateEl.textContent = hps;
+        logEl.innerHTML += `Mined block #${data.block.index} | Reward: ${data.reward}<br>`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+    } catch(e){
+      logEl.innerHTML += "Error connecting to node.<br>";
     }
+    await new Promise(r => setTimeout(r, 500));
+  }
 }
 
 // --------- Send SFC ---------
 sendBtn.onclick = async () => {
-    const to = recipientInput.value;
-    const amount = parseInt(amountInput.value);
-    if(!walletAddress || !to || !amount) return alert("Fill all fields!");
-    try {
-        const res = await fetch(NODE_URL + "/send", {
-            method:"POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({from: walletAddress, to, amount})
-        });
-        const data = await res.json();
-        alert(data.status==="sent" ? "Transaction sent!" : data.error);
-    } catch(e) { alert("Error sending transaction"); }
+  const to = recipientInput.value;
+  const amount = parseInt(amountInput.value);
+  if(!walletAddress || !to || !amount) return alert("Fill all fields!");
+  try {
+    const res = await fetch(NODE_URL + "/send", {
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({from: walletAddress, to, amount})
+    });
+    const data = await res.json();
+    alert(data.status==="sent" ? "Transaction sent!" : data.error);
+  } catch(e) { alert("Error sending transaction"); }
 };
 
 // --------- Block Explorer ---------
-refreshBlocksBtn.onclick = loadBlocks;
-
 async function loadBlocks() {
-    try {
-        const res = await fetch(NODE_URL + "/blocks");
-        const blocks = await res.json();
-        blocksTableBody.innerHTML = "";
-        blocks.forEach(b => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${b.index}</td>
-                <td>${b.hash.substring(0,16)}...</td>
-                <td>${b.prev_hash.substring(0,16)}...</td>
-                <td>${b.transactions.length}</td>
-                <td>${b.nonce}</td>
-                <td>${new Date(b.timestamp*1000).toLocaleString()}</td>
-            `;
-            blocksTableBody.appendChild(tr);
-        });
-    } catch(e){
-        alert("Error loading blocks");
-    }
+  try {
+    const res = await fetch(NODE_URL + "/blocks");
+    const blocks = await res.json();
+    blocksTableBody.innerHTML = ""; // изчиства предишните редове
+    blocks.forEach(b => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${b.index}</td>
+        <td>${b.hash.substring(0,16)}...</td>
+        <td>${b.prev_hash.substring(0,16)}...</td>
+        <td>${b.transactions.length}</td>
+        <td>${b.nonce}</td>
+        <td>${new Date(b.timestamp*1000).toLocaleString()}</td>
+      `;
+      blocksTableBody.appendChild(tr);
+    });
+  } catch(e){
+    console.error("Error loading blocks:", e);
+  }
 }
+
+// Автоматично обновяване на Block Explorer на всеки 3 секунди
+setInterval(loadBlocks, 3000);
 
 // --------- Auto-load wallet ---------
 window.onload = () => {
-    const saved = localStorage.getItem("walletAddress");
-    if(saved){
-        walletAddress = saved;
-        walletInfo.textContent = "Wallet: " + walletAddress;
-    }
-    loadBlocks();
+  const saved = localStorage.getItem("walletAddress");
+  if(saved){
+    walletAddress = saved;
+    walletInfo.textContent = "Wallet: " + walletAddress;
+  }
+  loadBlocks();
 };
 </script>
-
 </body>
 </html>
