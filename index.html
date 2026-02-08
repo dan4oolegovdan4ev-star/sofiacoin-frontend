@@ -1,133 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <header>
-  
-  <h1>SofiaCoin Miner 🇧🇬</h1>
-  </header>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SofiaCoin Browser Miner</title>
-<style>
-/* --- Body --- */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #ffffff; /* бял фон */
-  color: #2f3640;
-  padding: 20px;
-  margin: 0;
-  text-align: center;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SofiaCoin Browser Miner 🇧🇬</title>
+  <style>
+  /* --- Body --- */
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #ffffff; /* бял фон */
+    color: #2f3640;
+    padding: 20px;
+    margin: 0;
+    text-align: center;
+  }
 
-/* --- Заглавие --- */
-h1 {
-  color: #e74c3c; /* червено */
-  margin-bottom: 25px;
-}
+  h1 { color: #e74c3c; margin-bottom: 25px; }
 
-/* --- Контейнери --- */
-div.wallet, div.mining, div.send {
-  background: #f5f6fa;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+  div.wallet, div.mining, div.send, div.explorer {
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
 
-/* --- Бутони --- */
-button {
-  margin: 5px;
-  padding: 10px 18px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
-}
+  button { margin: 5px; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
+  #createWalletBtn { background-color: #27ae60; color: #fff; }
+  #importWalletBtn { background-color: #f39c12; color: #fff; }
+  #startBtn { background-color: #2980b9; color: #fff; }
+  #stopBtn { background-color: #c0392b; color: #fff; }
+  #sendBtn { background-color: #8e44ad; color: #fff; }
 
-#createWalletBtn { background-color: #27ae60; color: #fff; }  /* зелено */
-#importWalletBtn { background-color: #f39c12; color: #fff; } /* оранжево */
-#startBtn { background-color: #2980b9; color: #fff; }        /* синьо */
-#stopBtn { background-color: #c0392b; color: #fff; }         /* червено */
-#sendBtn { background-color: #8e44ad; color: #fff; }         /* лилаво */
+  input { padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #dcdde1; width: calc(100% - 22px); }
 
-/* --- Input полета --- */
-input {
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 6px;
-  border: 1px solid #dcdde1;
-  width: calc(100% - 22px);
-}
+  #log { background: #ecf0f1; color: #2f3640; padding: 10px; max-height: 200px; overflow-y: scroll; border-radius: 8px; border: 1px solid #dcdde1; }
 
-/* --- Mining Log --- */
-#log {
-  background: #ecf0f1; /* светло сиво */
-  color: #2f3640;
-  padding: 10px;
-  max-height: 200px;
-  overflow-y: scroll;
-  border-radius: 8px;
-  border: 1px solid #dcdde1;
-}
+  .block { background: #fff; border: 2px solid #e74c3c; border-radius: 8px; padding: 10px; margin: 10px 0; text-align: left; }
+  .tx { background: #f0f0f0; border-radius: 5px; padding: 5px; margin: 5px 0; }
+  code { background: #f0f0f0; padding: 2px 4px; border-radius: 4px; }
 
-/* --- Stats --- */
-p {
-  margin: 5px 0;
-  font-weight: 500;
-}
-
-/* --- Флаг България на хедъра --- */
-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.flag {
-  width: 40px;
-  height: 25px;
-  border-radius: 4px;
-  border: 1px solid #bdc3c7;
-}
-.bg-white { background: #ffffff; }
-.bg-green { background: #27ae60; }
-.bg-red { background: #e74c3c; }
-</style>
-
-
+  h3 { margin-top: 30px; }
+  </style>
 </head>
 <body>
 
+<h1>SofiaCoin Miner 🇧🇬</h1>
 
-<div>
+<!-- Wallet -->
+<div class="wallet">
 <button id="createWalletBtn">Create Wallet</button>
 <button id="importWalletBtn">Import Wallet</button>
 <p id="walletInfo"></p>
 </div>
 
-<div>
+<!-- Mining -->
+<div class="mining">
 <button id="startBtn">Start Mining</button>
 <button id="stopBtn">Stop Mining</button>
 <p>Credits mined: <span id="credits">0</span></p>
 <p>H/s: <span id="hashrate">0</span></p>
 </div>
 
-<div>
+<!-- Send -->
+<div class="send">
 <input type="text" id="recipient" placeholder="Recipient address">
 <input type="number" id="amount" placeholder="Amount">
 <button id="sendBtn">Send SFC</button>
 </div>
 
+<!-- Mining Log -->
 <h3>Mining Log</h3>
 <div id="log"></div>
+
+<!-- Block Explorer -->
+<div class="explorer">
+<h3>Block Explorer</h3>
+<div id="blocks"></div>
+</div>
 
 <script>
 let mining = false;
 let credits = 0;
 let walletAddress = null;
-let lastHashTime = 0;
 
 const creditsEl = document.getElementById('credits');
 const startBtn = document.getElementById('startBtn');
@@ -142,7 +97,9 @@ const recipientInput = document.getElementById('recipient');
 const amountInput = document.getElementById('amount');
 const sendBtn = document.getElementById('sendBtn');
 
-const NODE_URL = "https://integral-crowd-construction-stewart.trycloudflare.com";
+const blocksEl = document.getElementById('blocks');
+
+const NODE_URL = "https://sheets-output-karen-myspace.trycloudflare.com";
 
 // --------- Wallet ---------
 createWalletBtn.onclick = async () => {
@@ -194,6 +151,7 @@ async function mineLoop(){
         hashrateEl.textContent = hps;
         logEl.innerHTML += `Mined block #${data.block.index} | Reward: ${data.reward}<br>`;
         logEl.scrollTop = logEl.scrollHeight;
+        fetchBlocks(); // обновяване на блоковете
       }
     } catch(e){
       logEl.innerHTML += `Error connecting to node.<br>`;
@@ -207,7 +165,6 @@ sendBtn.onclick = async () => {
   const to = recipientInput.value;
   const amount = parseInt(amountInput.value);
   if(!walletAddress || !to || !amount) return alert("Fill all fields!");
-
   try {
     const res = await fetch(NODE_URL + "/send", {
       method: "POST",
@@ -216,6 +173,7 @@ sendBtn.onclick = async () => {
     });
     const data = await res.json();
     alert(data.status === "sent" ? "Transaction sent!" : data.error);
+    fetchBlocks(); // обновяване на блоковете
   } catch(e){
     alert("Error sending transaction");
   }
@@ -228,8 +186,39 @@ window.onload = () => {
     walletAddress = saved;
     walletInfo.textContent = "Wallet: " + walletAddress;
   }
+  fetchBlocks();
 };
-</script>
 
+// --------- Block Explorer ---------
+async function fetchBlocks() {
+  try {
+    const res = await fetch(NODE_URL + "/blocks");
+    const data = await res.json();
+    blocksEl.innerHTML = "";
+    data.forEach(block => {
+      let txHTML = "";
+      block.transactions.forEach(tx => {
+        txHTML += `<div class="tx"><b>From:</b> ${tx.from} <b>To:</b> ${tx.to} <b>Amount:</b> ${tx.amount}</div>`;
+      });
+      blocksEl.innerHTML += `
+        <div class="block">
+          <p><b>Block #${block.index}</b></p>
+          <p><b>Hash:</b> <code>${block.hash}</code></p>
+          <p><b>Prev Hash:</b> <code>${block.prev_hash}</code></p>
+          <p><b>Nonce:</b> ${block.nonce}</p>
+          <p><b>Transactions:</b></p>
+          ${txHTML || "<i>No transactions</i>"}
+        </div>
+      `;
+    });
+  } catch(e){
+    blocksEl.innerHTML = "<p>Error fetching blocks.</p>";
+  }
+}
+
+// Optional: refresh explorer every 5 sec
+setInterval(fetchBlocks, 5000);
+
+</script>
 </body>
 </html>
