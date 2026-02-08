@@ -3,36 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SofiaCoin 💎</title>
-<link rel="stylesheet" href="style.css">
+<title>SofiaCoin Browser Miner</title>
+<style>
+body { font-family: Arial; background: #111; color: #0f0; padding: 20px; }
+button { margin: 5px; padding: 10px 15px; background: #0ff; border: none; cursor: pointer; color: #000; border-radius: 5px; }
+input { margin: 5px; padding: 8px; border-radius: 5px; border: 1px solid #0ff; background: #222; color: #0f0; }
+#log { background: #000; color: #0f0; padding: 10px; max-height: 200px; overflow-y: scroll; margin-top: 10px; }
+</style>
 </head>
 <body>
-<div class="container">
-  <h1>SofiaCoin Browser Miner</h1>
-  <div id="wallet-section">
-    <button id="createWallet">Create Wallet</button>
-    <button id="importWallet">Import Wallet</button>
-    <p id="seedPhrase" style="display:none;"></p>
-  </div>
 
-  <div id="mining-section">
-    <button id="startBtn">Start Mining</button>
-    <button id="stopBtn">Stop Mining</button>
-    <p>Credits mined: <span id="credits">0</span></p>
-    <p>H/s: <span id="hs">0</span></p>
-  </div>
+<h1>SofiaCoin Browser Miner 💎</h1>
 
-  <div id="send-section">
-    <input type="text" id="recipient" placeholder="Recipient address">
-    <input type="number" id="amount" placeholder="Amount">
-    <button id="sendBtn">Send SFC</button>
-  </div>
-
-  <div id="log-section">
-    <h3>Mining Log</h3>
-    <ul id="log"></ul>
-  </div>
+<div>
+<button id="createWalletBtn">Create Wallet</button>
+<button id="importWalletBtn">Import Wallet</button>
+<p id="walletInfo"></p>
 </div>
-<script src="app.js"></script>
+
+<div>
+<button id="startBtn">Start Mining</button>
+<button id="stopBtn">Stop Mining</button>
+<p>Credits mined: <span id="credits">0</span></p>
+<p>H/s: <span id="hashrate">0</span></p>
+</div>
+
+<div>
+<input type="text" id="recipient" placeholder="Recipient address">
+<input type="number" id="amount" placeholder="Amount">
+<button id="sendBtn">Send SFC</button>
+</div>
+
+<h3>Mining Log</h3>
+<div id="log"></div>
+
+<script>
+let mining = false;
+let credits = 0;
+let walletAddress = null;
+let lastHashTime = 0;
+
+const creditsEl = document.getElementById('credits');
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const createWalletBtn = document.getElementById('createWalletBtn');
+const importWalletBtn = document.getElementById('importWalletBtn');
+const walletInfo = document.getElementById('walletInfo');
+const logEl = document.getElementById('log');
+const hashrateEl = document.getElementById('hashrate');
+
+const recipientInput = document.getElementById('recipient');
+const amountInput = document.getElementById('amount');
+const sendBtn = document.getElementById('sendBtn');
+
+const NODE_URL = "https://incentives-grill-dev-lower.trycloudflare.com";
+
+// --------- Wallet ---------
+createWalletBtn.onclick = async () => {
+  const res = await fetch(NODE_URL + "/wallet/create", { method: "POST" });
+  const data = await res.json();
+  walletAddress = data.address;
+  alert("Save your seed phrase: " + data.seed);
+  walletInfo.textContent = "Wallet: " + walletAddress;
+  localStorage.setItem("walletAddress", walletAddress);
+};
+
+importWalletBtn.onclick = async () => {
+  const seed = prompt("Enter your seed phrase:");
+  if(!seed) return;
+  const res = await fetch(NODE_URL + "/wallet/import", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({seed})
+  });
+  const data = await res.json();
+  walletAddress = data.address;
+  walletInfo.textContent = "Wallet: " + walletAddress + " | Balance: " + data.balance;
+  localStorage.setItem("walletAddress", walletAddress);
+};
+
+// --------- Mining ---------
+startBtn.onclick = () => { 
+  if(!walletAddress) return alert("Create or import wallet first!");
+  mining = true; 
+  mineLoop(); 
+};
+stopBtn.onclick = () => { mining = false; };
+
+async function mineLoop(){
+  while(mining){
+    const startTime = performance.now();
+    try {
+      const res = await fetch(NODE_URL + "/mine", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({address: walletAddress})
+      });
+      const data = await res.json();
+      if(data.status === "mined"){
+        credits = data.balance;
+        creditsEl.textContent = credits;
+        const endTime = performance.now();
+        const hps = Math.floor(1000 / (endTime - startTime));
+        hashrateEl.textContent = hps;
+        logEl.innerHTML += `Mined block #${data.block.index} | Reward: ${data.reward}<br>`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+    } catch(e){
+      logEl.innerHTML += `Error connecting to node.<br>`;
+    }
+    await new Promise(r => setTimeout(r, 500));
+  }
+}
+
+// --------- Send SFC ---------
+sendBtn.onclick = async () => {
+  const to = recipientInput.value;
+  const amount = parseInt(amountInput.value);
+  if(!walletAddress || !to || !amount) return alert("Fill all fields!");
+
+  try {
+    const res = await fetch(NODE_URL + "/send", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({from: walletAddress, to, amount})
+    });
+    const data = await res.json();
+    alert(data.status === "sent" ? "Transaction sent!" : data.error);
+  } catch(e){
+    alert("Error sending transaction");
+  }
+};
+
+// --------- Auto-load wallet ---------
+window.onload = () => {
+  const saved = localStorage.getItem("walletAddress");
+  if(saved){
+    walletAddress = saved;
+    walletInfo.textContent = "Wallet: " + walletAddress;
+  }
+};
+</script>
+
 </body>
 </html>
